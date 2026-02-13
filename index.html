@@ -1532,7 +1532,7 @@
         // Mostrar detalles de temas
         function showTopicDetails(topicId) {
             const details = document.getElementById(`${topicId}-details`);
-            const button = event.target;
+           const button = btn;
             
             if (details.style.display === 'none' || !details.style.display) {
                 details.style.display = 'block';
@@ -1577,65 +1577,39 @@
                     `;
                     break;
                     
-                case 'phishing':
-                    simulationContent = `
-                        <div class="explanation-box">
-                            <h3><i class="fas fa-envelope-open-text"></i> Simulación: Detective de Phishing</h3>
-                            <p>Analiza este email sospechoso e identifica las señales de phishing:</p>
-                            <div style="background: var(--bg-card); padding: 1.5rem; border-radius: var(--border-radius); margin: 1rem 0;">
-                                <p><strong>De:</strong> soporte@bank-seguro.com</p>
-                                <p><strong>Asunto:</strong> URGENTE: Su cuenta requiere verificación inmediata</p>
-                                <p><strong>Mensaje:</strong></p>
-                                <p>Estimado cliente,</p>
-                                <p>Hemos detectado actividad sospechosa en su cuenta. Para evitar la suspensión, 
-                                haga clic <a href="#" style="color: var(--accent-primary);">aquí</a> para verificar su información.</p>
-                                <p>Atentamente,<br>El equipo de seguridad de Bank Seguro</p>
-                            </div>
-                            <div class="input-group">
-                                <p><strong>¿Qué señales de phishing puedes identificar?</strong></p>
-                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                    <label><input type="checkbox" name="phishingSigns" value="1"> URL sospechosa al pasar el cursor</label>
-                                    <label><input type="checkbox" name="phishingSigns" value="2"> Falsa sensación de urgencia</label>
-                                    <label><input type="checkbox" name="phishingSigns" value="3"> Dirección de email no oficial</label>
-                                    <label><input type="checkbox" name="phishingSigns" value="4"> Solicitud de información personal</label>
-                                    <label><input type="checkbox" name="phishingSigns" value="5"> Errores gramaticales o ortográficos</label>
-                                </div>
-                            </div>
-                            <button class="btn btn-primary" onclick="checkPhishingAnalysis()">Verificar Análisis</button>
-                            <div id="phishingResult" style="margin-top: 1.5rem;"></div>
-                        </div>
-                    `;
-                    break;
-                    
+               case 'phishing':
+simulationContent = `
+<div class="input-group">
+<label>Pega aquí el mensaje, correo o URL sospechosa:</label>
+
+<textarea id="phishingInput"
+placeholder="Ejemplo: Recibí un correo que dice que mi cuenta será suspendida..."
+style="width:100%; height:120px; padding:10px;"></textarea>
+</div>
+
+<button class="btn btn-primary" onclick="checkPhishing()">
+Analizar Phishing
+</button>
+
+<div id="phishingResult" style="margin-top:1.5rem;"></div>
+`;
+break;
+   
                 case 'malware':
                     simulationContent = `
-                        <div class="explanation-box">
-                            <h3><i class="fas fa-search"></i> Simulación: Cazador de Malware</h3>
-                            <p>Analiza estos comportamientos de sistema e identifica posibles infecciones de malware:</p>
-                            <div style="margin: 1.5rem 0;">
-                                <p><strong>Comportamientos observados:</strong></p>
-                                <ol style="margin-left: 1.5rem; margin-top: 1rem;">
-                                    <li>El sistema se ralentiza repentinamente</li>
-                                    <li>Aparecen ventanas emergentes constantemente</li>
-                                    <li>El ventilador funciona a máxima velocidad sin razón aparente</li>
-                                    <li>Se redirigen las búsquegas web a sitios desconocidos</li>
-                                    <li>Los archivos tienen extensiones extrañas (.crypt, .locked)</li>
-                                </ol>
-                            </div>
                             <div class="input-group">
-                                <label>¿Qué tipo(s) de malware podrían causar estos síntomas?</label>
-                                <select id="malwareType" style="width: 100%; padding: 0.8rem; background: var(--bg-primary); color: white; border: 1px solid var(--accent-primary); border-radius: var(--border-radius);">
-                                    <option value="">Selecciona una opción</option>
-                                    <option value="ransomware">Ransomware</option>
-                                    <option value="spyware">Spyware</option>
-                                    <option value="adware">Adware</option>
-                                    <option value="virus">Virus</option>
-                                    <option value="multiple">Múltiples tipos</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-primary" onclick="checkMalwareAnalysis()">Analizar Síntomas</button>
-                            <div id="malwareResult" style="margin-top: 1.5rem;"></div>
-                        </div>
+    <label>Describe los síntomas que presenta el sistema:</label>
+
+    <textarea id="malwareInput"
+    placeholder="Ejemplo: mi PC está lenta, aparecen ventanas emergentes, archivos bloqueados..."
+    style="width:100%; height:120px; padding:10px;"></textarea>
+</div>
+
+<button class="btn btn-primary" onclick="checkMalwareAnalysis()">
+Analizar Síntomas
+</button>
+
+<div id="resultadoMalware" style="margin-top: 1.5rem;"></div>
                     `;
                     break;
             }
@@ -1677,64 +1651,295 @@
             document.getElementById('passwordAnalysis').innerHTML = feedback;
         }
 
-        function checkPhishingAnalysis() {
-            const checkboxes = document.querySelectorAll('input[name="phishingSigns"]:checked');
-            const selectedValues = Array.from(checkboxes).map(cb => cb.value);
-            
-            // Todas las opciones son correctas en este caso
-            const correctAnswers = ['1', '2', '3', '4', '5'];
-            const correctCount = selectedValues.filter(value => correctAnswers.includes(value)).length;
-            
-            let result = '';
-            if (correctCount === 5) {
-                result = `
-                    <div style="background: rgba(76, 201, 240, 0.1); border: 1px solid var(--success); padding: 1.5rem; border-radius: var(--border-radius);">
-                        <h4 style="color: var(--success);"><i class="fas fa-check-circle"></i> ¡Excelente!</h4>
-                        <p>Identificaste todas las señales de phishing correctamente. Este email contiene múltiples indicadores de phishing.</p>
-                    </div>
-                `;
-            } else {
-                result = `
-                    <div style="background: rgba(247, 37, 133, 0.1); border: 1px solid var(--warning); padding: 1.5rem; border-radius: var(--border-radius);">
-                        <h4 style="color: var(--warning);"><i class="fas fa-exclamation-circle"></i> Puedes mejorar</h4>
-                        <p>Identificaste ${correctCount} de 5 señales correctamente. Revisa: URLs sospechosas, urgencia falsa, email no oficial, solicitud de información personal.</p>
-                    </div>
-                `;
-            }
-            
-            document.getElementById('phishingResult').innerHTML = result;
+      function checkPhishing(){
+
+const texto = document.getElementById('phishingInput').value.toLowerCase();
+
+let riesgo = 0;
+let alertas = [];
+let recomendaciones = [];
+let tipoPhishing = [];
+
+// ===== MEMORIA QUE APRENDE =====
+let frasesGuardadas = JSON.parse(localStorage.getItem("frasesPhishing")) || [];
+
+
+// ===== DETECTAR URL =====
+const urls = texto.match(/https?:\/\/[^\s]+/g);
+
+if(urls){
+
+    urls.forEach(url => {
+
+        if(url.includes("@") || url.includes("login") || url.includes("verify") || url.includes("auth")){
+            riesgo += 25;
+            alertas.push("Portal de inicio de sesión sospechoso");
+            tipoPhishing.push("Phishing de credenciales");
         }
 
-        function checkMalwareAnalysis() {
-            const selected = document.getElementById('malwareType').value;
-            let result = '';
-            
-            if (selected === 'multiple') {
-                result = `
-                    <div style="background: rgba(76, 201, 240, 0.1); border: 1px solid var(--success); padding: 1.5rem; border-radius: var(--border-radius);">
-                        <h4 style="color: var(--success);"><i class="fas fa-check-circle"></i> ¡Correcto!</h4>
-                        <p>Síntomas 1-4: Podrían indicar spyware o adware. Síntoma 5 (.crypt, .locked) es típico de ransomware. Probablemente hay múltiples infecciones.</p>
-                        <p style="margin-top: 1rem;"><strong>Acción recomendada:</strong> Ejecutar análisis completo con antivirus, usar herramientas anti-malware específicas y considerar restaurar el sistema.</p>
-                    </div>
-                `;
-            } else if (selected === 'ransomware') {
-                result = `
-                    <div style="background: rgba(247, 37, 133, 0.1); border: 1px solid var(--warning); padding: 1.5rem; border-radius: var(--border-radius);">
-                        <h4 style="color: var(--warning);"><i class="fas fa-exclamation-circle"></i> Parcialmente correcto</h4>
-                        <p>El síntoma 5 sí indica ransomware, pero los otros síntomas sugieren infecciones adicionales (spyware/adware).</p>
-                    </div>
-                `;
-            } else {
-                result = `
-                    <div style="background: rgba(247, 37, 133, 0.1); border: 1px solid var(--warning); padding: 1.5rem; border-radius: var(--border-radius);">
-                        <h4 style="color: var(--warning);"><i class="fas fa-times-circle"></i> Revisa tu respuesta</h4>
-                        <p>Los síntomas indican múltiples tipos de malware trabajando juntos. Los archivos con extensiones extrañas (.crypt, .locked) son específicos de ransomware.</p>
-                    </div>
-                `;
-            }
-            
-            document.getElementById('malwareResult').innerHTML = result;
+        if(url.includes(".xyz") || url.includes(".ru") || url.includes(".top")){
+            riesgo += 25;
+            alertas.push("Dominio sospechoso");
+            tipoPhishing.push("Phishing con dominio falso");
         }
+
+        if(url.length > 60){
+            riesgo += 15;
+            alertas.push("URL demasiado larga");
+        }
+    });
+}
+
+
+// ===== DETECTAR INGENIERÍA SOCIAL =====
+const manipulacion = [
+"urgente",
+"última oportunidad",
+"acción inmediata",
+"su cuenta será cerrada",
+"evitar suspensión",
+"bloquearemos su cuenta",
+"responda ahora"
+];
+
+manipulacion.forEach(frase => {
+    if(texto.includes(frase)){
+        riesgo += 20;
+        alertas.push("Uso de presión psicológica");
+        tipoPhishing.push("Ingeniería social");
+        frasesGuardadas.push(frase);
+    }
+});
+
+
+// ===== DETECTAR SOLICITUD DE DATOS =====
+const datosPersonales = [
+"contraseña",
+"tarjeta",
+"código de seguridad",
+"pin",
+"credenciales",
+"datos bancarios"
+];
+
+datosPersonales.forEach(dato => {
+    if(texto.includes(dato)){
+        riesgo += 20;
+        alertas.push("Solicitud de información sensible");
+        tipoPhishing.push("Robo de información");
+    }
+});
+
+
+// ===== DETECTAR SALUDOS GENERICOS =====
+if(texto.includes("estimado cliente") || texto.includes("usuario")){
+    riesgo += 15;
+    alertas.push("Saludo genérico sospechoso");
+    tipoPhishing.push("Phishing masivo");
+}
+
+
+// ===== DETECTAR AUTORIDAD FALSA =====
+if(texto.includes("departamento de seguridad") || texto.includes("equipo antifraude")){
+    riesgo += 15;
+    alertas.push("Intento de aparentar autoridad");
+    tipoPhishing.push("Phishing corporativo");
+}
+
+
+// ===== DETECTAR OFERTAS FALSAS =====
+const premios = [
+"ganaste",
+"premio",
+"lotería",
+"recompensa",
+"bono"
+];
+
+premios.forEach(p => {
+    if(texto.includes(p)){
+        riesgo += 20;
+        alertas.push("Posible fraude por premio falso");
+        tipoPhishing.push("Scam promocional");
+    }
+});
+
+
+// ===== APRENDER FRASES =====
+localStorage.setItem("frasesPhishing", JSON.stringify([...new Set(frasesGuardadas)]));
+
+
+// ===== CALCULAR NIVEL =====
+riesgo = Math.min(riesgo,100);
+
+let nivel = "BAJO";
+
+if(riesgo >= 70){
+    nivel = "ALTO";
+    recomendaciones.push("No interactúes con el mensaje");
+    recomendaciones.push("Elimina el correo inmediatamente");
+}
+else if(riesgo >= 40){
+    nivel = "MEDIO";
+    recomendaciones.push("Verifica el remitente real");
+}
+else{
+    recomendaciones.push("Mantente alerta");
+}
+
+
+// ===== MOSTRAR RESULTADO =====
+document.getElementById("phishingResult").innerHTML = `
+<div class="result-box">
+
+<h3>Diagnóstico de Phishing</h3>
+
+<p><strong>Nivel de riesgo:</strong> ${nivel}</p>
+<p><strong>Probabilidad:</strong> ${riesgo}%</p>
+
+<p><strong>Tipo detectado:</strong></p>
+<ul>${[...new Set(tipoPhishing)].map(t=>`<li>${t}</li>`).join("")}</ul>
+
+<p><strong>Alertas:</strong></p>
+<ul>${alertas.map(a=>`<li>${a}</li>`).join("")}</ul>
+
+<p><strong>Recomendaciones:</strong></p>
+<ul>${recomendaciones.map(r=>`<li>${r}</li>`).join("")}</ul>
+
+</div>
+`;
+}
+
+
+
+
+
+
+       function checkMalwareAnalysis(){
+
+    const texto = document.getElementById("malwareInput").value.toLowerCase();
+
+    let resultados = [];
+
+    // ===== CARGAR PALABRAS APRENDIDAS =====
+    let palabrasAprendidas = JSON.parse(localStorage.getItem("palabrasAprendidas")) || {};
+
+    // ===== BASE DE DATOS =====
+    const amenazasDB = [
+        {
+            nombre: "Ransomware",
+            categoria: "Secuestro de datos",
+            recomendaciones: "Desconectar internet, no pagar rescate, restaurar backups, usar antivirus.",
+            palabras: ["locked","crypt","archivos bloqueados","rescatar archivos"]
+        },
+
+        {
+            nombre: "Adware",
+            categoria: "Publicidad maliciosa",
+            recomendaciones: "Eliminar programas sospechosos, usar anti-adware, limpiar navegador.",
+            palabras: ["ventanas emergentes","publicidad","anuncios"]
+        },
+
+        {
+            nombre: "Spyware",
+            categoria: "Robo de información",
+            recomendaciones: "Cambiar contraseñas, escanear sistema, activar autenticación en dos pasos.",
+            palabras: ["espía","roban datos","roban contraseñas"]
+        },
+
+        {
+            nombre: "Cryptominer",
+            categoria: "Uso ilegal de recursos",
+            recomendaciones: "Revisar procesos, eliminar programas desconocidos, usar antivirus.",
+            palabras: ["cpu 100","sobrecalienta","ventilador","se congela","pc lenta"]
+        }
+    ];
+
+    // ===== ANALISIS =====
+    amenazasDB.forEach(amenaza => {
+
+        let coincidencias = 0;
+
+        amenaza.palabras.forEach(p => {
+            if(texto.includes(p)){
+                coincidencias++;
+            }
+        });
+
+        // Palabras aprendidas
+        if(palabrasAprendidas[amenaza.nombre]){
+            palabrasAprendidas[amenaza.nombre].forEach(p => {
+                if(texto.includes(p)){
+                    coincidencias++;
+                }
+            });
+        }
+
+        if(coincidencias > 0){
+
+            let porcentaje = Math.min(coincidencias * 30, 95);
+
+            resultados.push({
+                nombre: amenaza.nombre,
+                categoria: amenaza.categoria,
+                recomendaciones: amenaza.recomendaciones,
+                porcentaje: porcentaje
+            });
+
+        }
+
+    });
+
+    // ===== APRENDIZAJE AUTOMÁTICO =====
+    resultados.forEach(r => {
+
+        if(!palabrasAprendidas[r.nombre]){
+            palabrasAprendidas[r.nombre] = [];
+        }
+
+        let palabrasTexto = texto.split(" ");
+
+        palabrasTexto.forEach(p => {
+            if(p.length > 5 && !palabrasAprendidas[r.nombre].includes(p)){
+                palabrasAprendidas[r.nombre].push(p);
+            }
+        });
+
+    });
+
+    localStorage.setItem("palabrasAprendidas", JSON.stringify(palabrasAprendidas));
+
+    // ===== GENERAR RESPUESTA =====
+    let salida = "<h4>🛡 Diagnóstico del Sistema</h4>";
+
+    if(resultados.length > 0){
+
+        resultados.forEach(r => {
+
+            salida += `
+            <div style="margin-bottom:1rem;">
+            <p> <strong>${r.nombre}</strong></p>
+            <p> Categoría: ${r.categoria}</p>
+            <p> Probabilidad: ${r.porcentaje}%</p>
+            <p> Recomendación: ${r.recomendaciones}</p>
+            <hr>
+            </div>
+            `;
+        });
+
+    }else{
+        salida += `
+        <p> No se detectó una amenaza clara.</p>
+        <p> Describe más síntomas para mejorar el análisis y poder ayudarte.</p>
+        `;
+
+    }
+
+    document.getElementById("resultadoMalware").innerHTML = salida;
+}
+
+
+
 
         // Búsqueda funcional
         document.getElementById('searchInput').addEventListener('input', function(e) {
